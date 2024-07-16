@@ -46,4 +46,13 @@ public class QuestionService {
     public void deleteQuestion(Long id) {
         questionRepository.deleteById(id);
     }
+
+    public void updateQuestionContent(Long id, String content) {
+        Optional<Question> questionOptional = questionRepository.findById(id);
+        if (questionOptional.isPresent()) {
+            Question question = questionOptional.get();
+            question.setContent(content);
+            questionRepository.save(question);
+        }
+    }
 }

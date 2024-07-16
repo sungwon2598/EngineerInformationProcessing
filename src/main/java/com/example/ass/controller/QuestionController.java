@@ -50,4 +50,10 @@ public class QuestionController {
     public void deleteQuestion(@PathVariable Long id) {
         questionService.deleteQuestion(id);
     }
+
+    @PostMapping("/questions/{id}/edit")
+    @ResponseBody
+    public void updateQuestionContent(@PathVariable Long id, @RequestParam String content) {
+        questionService.updateQuestionContent(id, content);
+    }
 }

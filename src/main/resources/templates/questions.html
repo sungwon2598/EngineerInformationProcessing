@@ -9,7 +9,9 @@
         .answer { display: none; }
         .starred { color: gold; cursor: pointer; font-size: 1.5rem; }
         .not-starred { color: gray; cursor: pointer; font-size: 1.5rem; }
-        .delete { color: red; cursor: pointer; margin-left: 10px; font-size: 1.5rem; }
+        .delete, .edit, .save { color: red; cursor: pointer; font-size: 1.5rem; margin-left: 10px; }
+        .edit-input { display: none; }
+        .icon-container { text-align: right; margin-top: 5px; }
     </style>
     <script>
         function toggleAnswer(id) {
@@ -45,21 +47,55 @@
                     });
             }
         }
+
+        function editQuestion(id) {
+            var contentSpan = document.getElementById('content-' + id);
+            var inputField = document.getElementById('input-' + id);
+            var editButton = document.getElementById('edit-' + id);
+            var saveButton = document.getElementById('save-' + id);
+            contentSpan.style.display = 'none';
+            inputField.style.display = 'block';
+            editButton.style.display = 'none';
+            saveButton.style.display = 'inline';
+        }
+
+        function saveQuestion(id) {
+            var inputField = document.getElementById('input-' + id);
+            var contentSpan = document.getElementById('content-' + id);
+            var newContent = inputField.value;
+
+            fetch('/questions/' + id + '/edit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: 'content=' + encodeURIComponent(newContent)
+            }).then(() => {
+                contentSpan.textContent = newContent;
+                contentSpan.style.display = 'block';
+                inputField.style.display = 'none';
+                document.getElementById('edit-' + id).style.display = 'inline';
+                document.getElementById('save-' + id).style.display = 'none';
+            });
+        }
     </script>
 </head>
 <body>
 <div class="container mt-5">
     <h1>Questions</h1>
     <div class="mb-3">
-        <a href="/questions/starred" class="btn btn-primary">Show Starred Questions</a>
-        <a href="/excel/upload" class="btn btn-secondary">Upload Excel</a>
+        <a href="/questions/starred" class="btn btn-primary">별표 문제 보기</a>
+        <a href="/excel/upload" class="btn btn-secondary">문제 업로드</a>
     </div>
     <div th:each="question : ${questions}" class="card my-3" th:id="'question-' + ${question.id}">
         <div class="card-header">
-            <span th:text="${question.content}" th:onclick="'toggleAnswer(' + ${question.id} + ')'"></span>
+            <span th:id="'content-' + ${question.id}" th:text="${question.content}" th:onclick="'toggleAnswer(' + ${question.id} + ')'"></span>
+            <input th:id="'input-' + ${question.id}" class="edit-input form-control" type="text" th:value="${question.content}">
+        </div>
+        <div class="icon-container">
             <span th:id="'star-' + ${question.id}" th:classappend="${question.starred} ? ' starred' : ' not-starred'"
-                  class="float-right" th:onclick="'toggleStar(' + ${question.id} + ')'">&#9733;</span>
-            <span class="delete float-right" th:onclick="'deleteQuestion(' + ${question.id} + ')'">&#10005;</span>
+                  th:onclick="'toggleStar(' + ${question.id} + ')'">&#9733;</span>
+            <span class="edit" th:id="'edit-' + ${question.id}" th:onclick="'editQuestion(' + ${question.id} + ')'">&#9998;</span>
+            <span class="save" th:id="'save-' + ${question.id}" th:onclick="'saveQuestion(' + ${question.id} + ')'" style="display:none;">&#10003;</span>
+            <span class="delete" th:onclick="'deleteQuestion(' + ${question.id} + ')'">&#10005;</span>
         </div>
         <div th:id="'answer-' + ${question.id}" class="card-body answer" th:text="${question.answer.content}"></div>
     </div>
