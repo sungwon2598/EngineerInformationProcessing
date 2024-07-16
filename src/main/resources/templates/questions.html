@@ -52,7 +52,7 @@
     <h1>Questions</h1>
     <div class="mb-3">
         <a href="/questions/starred" class="btn btn-primary">Show Starred Questions</a>
-        <a href="/upload" class="btn btn-secondary">Upload Excel</a>
+        <a href="/excel/upload" class="btn btn-secondary">Upload Excel</a>
     </div>
     <div th:each="question : ${questions}" class="card my-3" th:id="'question-' + ${question.id}">
         <div class="card-header">
