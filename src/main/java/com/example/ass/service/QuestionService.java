@@ -19,19 +19,19 @@ public class QuestionService {
     }
 
     public List<Question> findAllQuestions() {
-        List<Question> questions = questionRepository.findAll();
-        Collections.shuffle(questions); // Shuffle the list to randomize the order
+        List<Question> questions = questionRepository.findAllWithAnswer();
+        Collections.shuffle(questions);
         return questions;
     }
 
     public List<Question> findStarredQuestions() {
-        List<Question> questions = questionRepository.findByStarredTrue();
-        Collections.shuffle(questions); // Shuffle the list to randomize the order
+        List<Question> questions = questionRepository.findStarredWithAnswer();
+        Collections.shuffle(questions);
         return questions;
     }
 
     public Question findQuestionById(Long id) {
-        return questionRepository.findById(id).orElse(null);
+        return questionRepository.findByIdWithAnswer(id).orElse(null);
     }
 
     public void updateStarredStatus(Long id, boolean starred) {
